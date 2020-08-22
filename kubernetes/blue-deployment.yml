@@ -22,19 +22,3 @@ spec:
         image: annantguptacs15/apache-test:latest
         ports:
         - containerPort: 80
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: apache-service
-  deployment: blue
-spec:
-  type: NodePort
-  selector:
-    app: apache-app
-  ports:
-    - nodePort: 30010
-      port: 80
-      protocol: TCP
-      targetPort: 80
