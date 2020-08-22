@@ -1,0 +1,1 @@
+aws cloudformation create-stack --stack-name EKSCluster --template-body file://create-eks-cluster.yml  --parameters file://eks-cluster-params.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
