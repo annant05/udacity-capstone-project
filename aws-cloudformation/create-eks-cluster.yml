@@ -1,8 +1,9 @@
 ---
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
+Description: |
+  Launch a Elastic Kubenetes Cluster (EKS)
 
 Parameters:
-
   EnvironmentName:
     Description: An environment name that will be prefixed to resource names
     Type: String
@@ -10,48 +11,93 @@ Parameters:
   EKSClusterName:
     Type: String
     Description: The desired name of your AWS EKS Cluster.
-    
-Resources:
 
+  NodeGroupName:
+    Type: String
+    Description: The desired name of your AWS EKS NodeGroup.
+
+Resources:
   ControlPlaneSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Cluster communication with worker nodes
-      VpcId: 
+      VpcId:
         Fn::ImportValue: !Sub "${EnvironmentName}-VPCID"
 
-  EKSIAMRole:
+  eksClusterRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - eks.amazonaws.com
-          Action:
-          - sts:AssumeRole
+          - Effect: Allow
+            Principal:
+              Service:
+                - eks.amazonaws.com
+            Action:
+              - sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
-        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+      Path: /
+
+  NodeGroupInstanceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Sub "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+        - !Sub "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+        - !Sub "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      Path: /
 
   EKSCluster:
     Type: AWS::EKS::Cluster
     Properties:
       Name: !Ref EKSClusterName
-      RoleArn: !GetAtt ["EKSIAMRole", "Arn"]
+      Version: "1.17"
+      RoleArn: !GetAtt ["eksClusterRole", "Arn"]
       ResourcesVpcConfig:
         SecurityGroupIds:
-        - !Ref ControlPlaneSecurityGroup
+          - !Ref ControlPlaneSecurityGroup
         SubnetIds:
+          - Fn::ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
+          - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
+          - Fn::ImportValue: !Sub "${EnvironmentName}-PUB3-SN"
+
+  EksNodeGroup:
+    Type: "AWS::EKS::Nodegroup"
+    Properties:
+      NodegroupName: !Ref NodeGroupName
+      ClusterName: !Ref EKSCluster
+      AmiType: "AL2_x86_64"
+      DiskSize: 5
+      InstanceTypes:
+        - t3.small
+      NodeRole: !GetAtt ["NodeGroupInstanceRole", "Arn"]
+      Subnets:
         - Fn::ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
         - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
         - Fn::ImportValue: !Sub "${EnvironmentName}-PUB3-SN"
-
+      ScalingConfig:
+        DesiredSize: 3
+        MaxSize: 6
+        MinSize: 3
+      RemoteAccess:
+        Ec2SshKey: shared-c9
 
 Outputs:
-
   EKSClusterArn:
     Description: Displays the EKSClusterArn.
     Value: !GetAtt EKSCluster.Arn
+
+  NodeGroupArn:
+    Description: Displays the NodeGroupAr.
+    Value: !GetAtt EksNodeGroup.Arn

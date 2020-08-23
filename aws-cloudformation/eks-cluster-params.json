@@ -4,6 +4,10 @@
     "ParameterValue": "CapstoneProject"
   },
   {
+    "ParameterKey": "NodeGroupName",
+    "ParameterValue": "CapstoneNodeGroup"
+  },
+  {
     "ParameterKey": "EKSClusterName",
     "ParameterValue": "CapstoneEKSCluster"
   }
