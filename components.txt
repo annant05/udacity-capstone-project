@@ -1,0 +1,38 @@
+EKS Cluster Config
+    -> Name
+    -> kubeversion
+    -> Service Role
+    -> Tags
+
+    -> Neworking 
+        VPC
+        subnets 
+        Security Group
+
+    -> Endpoint access
+
+NodeGroups
+    -> Name
+    -> Node IAM role
+    -> optional Launch Template
+    -> kube labels optional 
+    -> tags optional 
+    
+    -> Node Group Compute configuration 
+        - AMI type AL2_x865-64
+        - Instance type
+        - Disk Size
+    
+    -> Node Group scaling Configuration 
+        - minimum size 
+        - maximum size 
+        - desired size 
+
+    -> Node Group Networking 
+        - subnets 
+        - ssh key pair 
+        - Allow remote access to nodes 
+        - allow remote access from 
+            .. or 
+            all
+            selected security group 

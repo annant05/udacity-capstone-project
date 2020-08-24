@@ -1,11 +1,9 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: green-apache-deployment
+  name: apache-deployment
   labels:
     app: apache-app
-    deployment: green
 spec:
   replicas: 3
   selector:
@@ -15,10 +13,9 @@ spec:
     metadata:
       labels:
         app: apache-app
-        deployment: green
     spec:
       containers:
       - name: apache-test
-        image: annantguptacs15/apache-test:latest
+        image: annantguptacs15/apachefrontend:latest
         ports:
         - containerPort: 80

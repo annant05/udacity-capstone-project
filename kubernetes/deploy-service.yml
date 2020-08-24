@@ -9,8 +9,6 @@ spec:
     app: apache-app
   ports:
     - nodePort: 30010
-      port: 8000
+      port: 80
       protocol: TCP
       targetPort: 80
-  externalIPs: 
-    - 172.31.93.242
