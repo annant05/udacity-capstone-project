@@ -8,9 +8,9 @@ pipeline {
   }
   agent any
   stages {
-    stage('Install os packages') {
+    stage('output whoami') {
       steps {
-        sh 'make updateos install'
+        sh 'whoami'
       }
     }
     stage('Lint HTML') {
