@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: apache-service
+  name: lb-apache-service
 spec:
   type: LoadBalancer
   selector:
