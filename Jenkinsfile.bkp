@@ -26,6 +26,7 @@ pipeline {
     stage('Build Docker Image and Publish ') {
       steps {  
           dir("./project-src/${env.DEPLOY_TYPE}/"){
+            // sh 'docker build -t $registry/$BUILD_NUMBER .'
             script {
                 dockerImgVar = docker.build registry + ":$BUILD_NUMBER"
                 docker.withRegistry('', registryCredential) {
@@ -35,29 +36,29 @@ pipeline {
         }
       }
     }
-    stage('Set kubectl for the cluster') {
-      steps {
-        withAWS(region: 'us-east-1', credentials: 'aws-cred') {
-          sh '''
-                        aws eks --region us-east-1 update-kubeconfig --name $EKS_CLUSTERNAME
-                    '''
-        }
-      }
-    }
-    stage('Create Kubernetes deployment') {
-      steps {
-        sh 'kubectl apply -f ./kubernetes/$DEPLOY_TYPE-deployment.yml'
-      }
-    }
-    stage('Create Kubernetes sevice') {
-      steps {
-        sh 'kubectl apply -f ./kubernetes/$deploy-service.yml'
-      }
-    }
-    stage('Output EKS service output') {
-      steps {
-        sh 'kubectl get service/lb-apache-service'
-      }
-    }
+    // stage('Set kubectl for the cluster') {
+    //   steps {
+    //     withAWS(region: 'us-east-1', credentials: 'aws-cred') {
+    //       sh '''
+    //                     aws eks --region us-east-1 update-kubeconfig --name $EKS_CLUSTERNAME
+    //                 '''
+    //     }
+    //   }
+    // }
+    // stage('Create Kubernetes deployment') {
+    //   steps {
+    //     sh 'kubectl apply -f ./kubernetes/$DEPLOY_TYPE-deployment.yml'
+    //   }
+    // }
+    // stage('Create Kubernetes sevice') {
+    //   steps {
+    //     sh 'kubectl apply -f ./kubernetes/$deploy-service.yml'
+    //   }
+    // }
+    // stage('Output EKS service output') {
+    //   steps {
+    //     sh 'kubectl get service/lb-apache-service'
+    //   }
+    // }
   }
 }
