@@ -15,7 +15,7 @@ spec:
         app: apache-app
     spec:
       containers:
-      - name: apache-test
-        image: annantguptacs15/apachefrontend:latest
+      - name: capestonenginx
+        image: annantguptacs15/capestonenginx:latest
         ports:
         - containerPort: 80
