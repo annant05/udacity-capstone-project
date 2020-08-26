@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: capestonenginx
-        image: annantguptacs15/capestonenginx:latest
+        image: annantguptacs15/capestonenginx:blue
         ports:
         - containerPort: 80

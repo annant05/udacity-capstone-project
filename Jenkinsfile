@@ -27,7 +27,7 @@ pipeline {
       steps {  
           dir("./project-src/${env.DEPLOY_TYPE}/"){
             script {
-                dockerImgVar = docker.build registry + ":$BUILD_NUMBER"
+                dockerImgVar = docker.build registry + ":$DEPLOY_TYPE"
                 docker.withRegistry('', registryCredential) {
                 dockerImgVar.push()
                 }
@@ -51,7 +51,7 @@ pipeline {
     }
     stage('Create Kubernetes sevice') {
       steps {
-        sh 'kubectl apply -f ./kubernetes/$deploy-service.yml'
+        sh 'kubectl apply -f ./kubernetes/deploy-service.yml'
       }
     }
     stage('Output EKS service output') {
