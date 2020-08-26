@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    DEPLOY_TYPE = 'blue'
+    DEPLOY_TYPE = 'green'
     EKS_CLUSTERNAME = 'CapstoneEKSCluster'
     registry = 'annantguptacs15/capestonenginx'
     registryCredential = 'dockerhub'
